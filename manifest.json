@@ -1,0 +1,19 @@
+{
+  "name": "HTB Erdwärmesonden-Protokoll",
+  "short_name": "EWS Protokoll",
+  "description": "Baustellenprotokolle für Erdwärmesonden: Bohr-, Injektions-, Druck-, Übergabe- und Gasmessprotokoll mit PDF-Export.",
+  "start_url": "/Erdwaermesonde/",
+  "scope": "/Erdwaermesonde/",
+  "display": "standalone",
+  "background_color": "#0d2f4f",
+  "theme_color": "#0d2f4f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/Erdwaermesonde/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
