@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d2f4f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="EWS Protokoll" />
+  <title>Erdwärmesonden-Protokoll</title>
+  <link rel="manifest" href="/Erdwaermesonde/manifest.json?v=1" />
+  <link rel="stylesheet" href="/Erdwaermesonde/styles.css?v=1" />
+  <script defer src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit/dist/fontkit.umd.min.js"></script>
+</head>
+<body>
+
+<header class="brand">
+  <div class="brand__bar">
+    <div class="brand__info">
+      <div class="brand__company">Erdwärmesonden-Protokoll</div>
+      <div class="brand__subtitle">HTB Baugesellschaft m.b.H. · Bohr-, Injektions-, Druck-, Übergabe- &amp; Gasmessprotokolle</div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Menü">
+  <button class="tab is-active" data-tab="bohren" type="button">Bohren</button>
+  <button class="tab" data-tab="injektion" type="button">Injektion</button>
+  <button class="tab" data-tab="druckprobe" type="button">Druck</button>
+  <button class="tab" data-tab="uebergabe" type="button">Übergabe</button>
+  <button class="tab" data-tab="gas" type="button">Gas</button>
+  <button class="tab" data-tab="verlauf" type="button">Verlauf</button>
+</nav>
+
+<!-- ═══════════════ TAB: BOHREN ═══════════════ -->
+<main id="tab-bohren" class="pane is-active" role="tabpanel">
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Stammdaten</summary>
+    <div class="card__body">
+      <div class="form-grid">
+        <label class="field"><span class="field__label">Objekt</span>
+          <input id="bohr-objekt" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Straße</span>
+          <input id="bohr-strasse" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Ort</span>
+          <input id="bohr-ort" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Gemeinde</span>
+          <input id="bohr-gemeinde" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Auftragsnummer</span>
+          <input id="bohr-auftragsnummer" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bewilligungsnummer</span>
+          <input id="bohr-bewilligungsnummer" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Maschinentyp</span>
+          <input id="bohr-maschinentyp" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bohrart</span>
+          <input id="bohr-bohrart" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Sonden Nummer</span>
+          <input id="bohr-sondennummer" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bohrmeister</span>
+          <input id="bohr-bohrmeister" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bauleitung</span>
+          <input id="bohr-bauleitung" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Koordination</span>
+          <input id="bohr-koordination" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Geologie</span>
+          <input id="bohr-geologie" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bohrbeginn</span>
+          <input id="bohr-bohrbeginn" class="field__input" type="date" /></label>
+        <label class="field"><span class="field__label">Bohrende</span>
+          <input id="bohr-bohrende" class="field__input" type="date" /></label>
+      </div>
+    </div>
+  </details>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">EWS-Daten</summary>
+    <div class="card__body">
+      <div class="form-grid">
+        <label class="field"><span class="field__label">EWS-Typ</span>
+          <input id="bohr-ewstyp" class="field__input" type="text" placeholder="z.B. Duplex 32mm" /></label>
+        <label class="field"><span class="field__label">EWS-Länge [m]</span>
+          <input id="bohr-ewslaenge" class="field__input" type="number" step="0.1" /></label>
+        <label class="field"><span class="field__label">Probenentnahme alle [m]</span>
+          <input id="bohr-probenentnahme" class="field__input" type="number" step="1" /></label>
+        <label class="field"><span class="field__label">Injektion</span>
+          <select id="bohr-injektiontyp" class="field__input">
+            <option value="">— wählen —</option>
+            <option value="Dämmer">Dämmer</option>
+            <option value="Bentonit">Bentonit</option>
+            <option value="Thermocem">Thermocem</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </details>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Schichtenverzeichnis</summary>
+    <div class="card__body">
+      <div class="table-wrap">
+        <table class="mess-table" id="bohr-schichten-table">
+          <thead>
+            <tr>
+              <th style="width:60px">Tiefe bis [m]</th>
+              <th>Hauptbestandteil</th>
+              <th>Nebenbestandteil</th>
+              <th>Eigenschaften</th>
+              <th style="width:55px">Lagerung</th>
+              <th style="width:50px">Medium</th>
+              <th style="width:55px">Wasser</th>
+              <th>Bemerkungen</th>
+            </tr>
+          </thead>
+          <tbody id="bohr-schichten-body"></tbody>
+        </table>
+      </div>
+      <div class="plus-wrap">
+        <button id="btnAddSchicht" class="btn-plus" type="button">+</button>
+        <div class="plus-label">Schicht hinzufügen</div>
+      </div>
+    </div>
+  </details>
+
+  <details class="card card--collapsible">
+    <summary class="card__title">Besondere Vorkommnisse</summary>
+    <div class="card__body">
+      <div class="form-grid">
+        <label class="field"><span class="field__label">GW-Spiegel [m]</span>
+          <input id="bohr-gwsp" class="field__input" type="number" step="0.01" /></label>
+        <label class="field"><span class="field__label">Wasserzufluss</span>
+          <select id="bohr-wz" class="field__input">
+            <option value="">— keine —</option>
+            <option value="wenig">wenig (&lt;10 l/min)</option>
+            <option value="mäßig">mäßig (&lt;30 l/min)</option>
+            <option value="viel">viel (&gt;30 l/min)</option>
+          </select>
+        </label>
+        <label class="field"><span class="field__label">Spülverluste</span>
+          <input id="bohr-sv" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Artesisch</span>
+          <select id="bohr-ar" class="field__input">
+            <option value="nein">Nein</option><option value="ja">Ja</option>
+          </select>
+        </label>
+        <label class="field"><span class="field__label">Kavernen</span>
+          <input id="bohr-kv" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Gasgeruch</span>
+          <select id="bohr-gasgeruch" class="field__input">
+            <option value="nein">Nein</option><option value="ja">Ja</option>
+          </select>
+        </label>
+        <label class="field field--full"><span class="field__label">Bemerkungen</span>
+          <textarea id="bohr-bemerkungen" class="field__input" rows="3"></textarea>
+        </label>
+      </div>
+    </div>
+  </details>
+
+  <section class="card card--actions">
+    <div class="action-row">
+      <button class="btn btn--save btn--small" data-action="save" data-proto="bohren" type="button">Speichern</button>
+      <button class="btn btn--ghost btn--small" data-action="reset" data-proto="bohren" type="button">Reset</button>
+    </div>
+    <div class="hint">Speichert das Bohrprotokoll im Verlauf</div>
+  </section>
+</main>
+
+<!-- ═══════════════ TAB: INJEKTION ═══════════════ -->
+<main id="tab-injektion" class="pane" role="tabpanel" hidden>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Stammdaten</summary>
+    <div class="card__body">
+      <div class="form-grid">
+        <label class="field"><span class="field__label">Objekt</span>
+          <input id="inj-objekt" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Straße</span>
+          <input id="inj-strasse" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Ort</span>
+          <input id="inj-ort" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Auftragsnummer</span>
+          <input id="inj-auftragsnummer" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Geologie</span>
+          <input id="inj-geologie" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bauleitung</span>
+          <input id="inj-bauleitung" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bohrmeister</span>
+          <input id="inj-bohrmeister" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Koordination</span>
+          <input id="inj-koordination" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Injektion durch</span>
+          <input id="inj-injektiondurch" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Injektion am</span>
+          <input id="inj-injektionam" class="field__input" type="date" /></label>
+      </div>
+    </div>
+  </details>
+
+  <section class="card">
+    <div class="card__title">Sonden</div>
+    <div id="injSondenContainer"></div>
+    <div class="plus-wrap">
+      <button id="btnAddInjSonde" class="btn-plus" type="button">+</button>
+      <div class="plus-label">Sonde hinzufügen</div>
+    </div>
+  </section>
+
+  <section class="card card--actions">
+    <div class="action-row">
+      <button class="btn btn--save btn--small" data-action="save" data-proto="injektion" type="button">Speichern</button>
+      <button class="btn btn--ghost btn--small" data-action="reset" data-proto="injektion" type="button">Reset</button>
+    </div>
+    <div class="hint">Speichert das Injektionsprotokoll im Verlauf</div>
+  </section>
+</main>
+
+<!-- ═══════════════ TAB: DRUCKPROBE ═══════════════ -->
+<main id="tab-druckprobe" class="pane" role="tabpanel" hidden>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Stammdaten</summary>
+    <div class="card__body">
+      <div class="form-grid">
+        <label class="field"><span class="field__label">Objekt</span>
+          <input id="dp-objekt" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">GS / KG</span>
+          <input id="dp-gskg" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Ort</span>
+          <input id="dp-ort" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Auftragsnummer</span>
+          <input id="dp-auftragsnummer" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Geologie</span>
+          <input id="dp-geologie" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bauleitung</span>
+          <input id="dp-bauleitung" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bohrmeister</span>
+          <input id="dp-bohrmeister" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Koordination</span>
+          <input id="dp-koordination" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Geprüft durch</span>
+          <input id="dp-geprueftdurch" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Geprüft am</span>
+          <input id="dp-geprueftam" class="field__input" type="date" /></label>
+      </div>
+    </div>
+  </details>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Prüfverfahren</summary>
+    <div class="card__body">
+      <div class="info-box">
+        <p><b>1. Druckprüfung nach Einbau</b> – Kurzzeitprüfung · Toleranz Druckabfall 0,1 bar</p>
+        <p><b>2. Druck-Endprüfung nach Injektion</b> – Langzeitprüfung · Toleranz Druckabfall 0,2 bar</p>
+        <p><b>3. Durchfluss-Endprüfung</b> – Durchlaufprüfung mit Wasser</p>
+      </div>
+    </div>
+  </details>
+
+  <section class="card">
+    <div class="card__title">Sonden-Prüfungen</div>
+    <div id="dpSondenContainer"></div>
+    <div class="plus-wrap">
+      <button id="btnAddDpSonde" class="btn-plus" type="button">+</button>
+      <div class="plus-label">Sonde hinzufügen</div>
+    </div>
+  </section>
+
+  <details class="card card--collapsible">
+    <summary class="card__title">Bemerkungen / Besonderheiten</summary>
+    <div class="card__body">
+      <label class="field field--full">
+        <textarea id="dp-bemerkungen" class="field__input" rows="4" placeholder="Muffen, Leitungen, Hosenstücke …"></textarea>
+      </label>
+    </div>
+  </details>
+
+  <section class="card card--actions">
+    <div class="action-row">
+      <button class="btn btn--save btn--small" data-action="save" data-proto="druckprobe" type="button">Speichern</button>
+      <button class="btn btn--ghost btn--small" data-action="reset" data-proto="druckprobe" type="button">Reset</button>
+    </div>
+    <div class="hint">Speichert das Druckprobe-Protokoll im Verlauf</div>
+  </section>
+</main>
+
+<!-- ═══════════════ TAB: ÜBERGABE ═══════════════ -->
+<main id="tab-uebergabe" class="pane" role="tabpanel" hidden>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Auftraggeber / Bauherr</summary>
+    <div class="card__body">
+      <div class="brunnen-grid">
+        <section class="brunnen-box">
+          <div class="brunnen-title brunnen-title--foerder">Auftraggeber</div>
+          <div class="form-grid">
+            <label class="field"><span class="field__label">Name</span>
+              <input id="ueb-ag-name" class="field__input" type="text" /></label>
+            <label class="field"><span class="field__label">Straße</span>
+              <input id="ueb-ag-strasse" class="field__input" type="text" /></label>
+            <label class="field"><span class="field__label">PLZ / Ort</span>
+              <input id="ueb-ag-plzort" class="field__input" type="text" /></label>
+            <label class="field"><span class="field__label">Auftragsnummer</span>
+              <input id="ueb-ag-auftragsnummer" class="field__input" type="text" /></label>
+          </div>
+        </section>
+        <section class="brunnen-box">
+          <div class="brunnen-title brunnen-title--schluck">Bauherr / Kunde</div>
+          <div class="form-grid">
+            <label class="field"><span class="field__label">Name</span>
+              <input id="ueb-bh-name" class="field__input" type="text" /></label>
+            <label class="field"><span class="field__label">Straße</span>
+              <input id="ueb-bh-strasse" class="field__input" type="text" /></label>
+            <label class="field"><span class="field__label">PLZ / Ort</span>
+              <input id="ueb-bh-plzort" class="field__input" type="text" /></label>
+            <label class="field"><span class="field__label">Bohrmeister</span>
+              <input id="ueb-bh-bohrmeister" class="field__input" type="text" /></label>
+          </div>
+        </section>
+      </div>
+    </div>
+  </details>
+
+  <section class="card">
+    <div class="card__title">Erdwärmesonden</div>
+    <div id="uebSondenContainer"></div>
+    <div class="plus-wrap">
+      <button id="btnAddUebSonde" class="btn-plus" type="button">+</button>
+      <div class="plus-label">EWS hinzufügen</div>
+    </div>
+  </section>
+
+  <details class="card card--collapsible">
+    <summary class="card__title">Bemerkungen</summary>
+    <div class="card__body">
+      <label class="field field--full">
+        <textarea id="ueb-bemerkungen" class="field__input" rows="3"></textarea>
+      </label>
+    </div>
+  </details>
+
+  <section class="card card--actions">
+    <div class="action-row">
+      <button class="btn btn--save btn--small" data-action="save" data-proto="uebergabe" type="button">Speichern</button>
+      <button class="btn btn--ghost btn--small" data-action="reset" data-proto="uebergabe" type="button">Reset</button>
+    </div>
+    <div class="hint">Speichert das Übergabeprotokoll im Verlauf</div>
+  </section>
+</main>
+
+<!-- ═══════════════ TAB: GAS ═══════════════ -->
+<main id="tab-gas" class="pane" role="tabpanel" hidden>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Stammdaten</summary>
+    <div class="card__body">
+      <div class="form-grid">
+        <label class="field"><span class="field__label">Objekt</span>
+          <input id="gas-objekt" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Straße</span>
+          <input id="gas-strasse" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Ort</span>
+          <input id="gas-ort" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Auftragsnummer</span>
+          <input id="gas-auftragsnummer" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bauleitung</span>
+          <input id="gas-bauleitung" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Bohrmeister</span>
+          <input id="gas-bohrmeister" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Koordination</span>
+          <input id="gas-koordination" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Überwachung</span>
+          <input id="gas-ueberwachung" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Messung durch</span>
+          <input id="gas-messungdurch" class="field__input" type="text" /></label>
+        <label class="field"><span class="field__label">Messung am</span>
+          <input id="gas-messungam" class="field__input" type="date" /></label>
+      </div>
+    </div>
+  </details>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Alarmeinstellungen</summary>
+    <div class="card__body">
+      <div class="table-wrap">
+        <table class="mess-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>GAS [%]</th>
+              <th>O₂ [%]</th>
+              <th>LEL [%]</th>
+              <th>H₂S [ppm]</th>
+              <th>CO [ppm]</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>LOW</b></td>
+              <td><input id="gas-alarm-low-gas" class="mess-input" type="number" step="0.1" value="" /></td>
+              <td><input id="gas-alarm-low-o2" class="mess-input" type="number" step="0.1" value="19.5" /></td>
+              <td><input id="gas-alarm-low-lel" class="mess-input" type="number" step="1" value="10" /></td>
+              <td><input id="gas-alarm-low-h2s" class="mess-input" type="number" step="1" value="10" /></td>
+              <td><input id="gas-alarm-low-co" class="mess-input" type="number" step="1" value="30" /></td>
+            </tr>
+            <tr>
+              <td><b>HIGH</b></td>
+              <td><input id="gas-alarm-high-gas" class="mess-input" type="number" step="0.1" value="" /></td>
+              <td><input id="gas-alarm-high-o2" class="mess-input" type="number" step="0.1" value="23.5" /></td>
+              <td><input id="gas-alarm-high-lel" class="mess-input" type="number" step="1" value="20" /></td>
+              <td><input id="gas-alarm-high-h2s" class="mess-input" type="number" step="1" value="20" /></td>
+              <td><input id="gas-alarm-high-co" class="mess-input" type="number" step="1" value="60" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+
+  <details class="card card--collapsible" open>
+    <summary class="card__title">Messungen</summary>
+    <div class="card__body">
+      <div class="table-wrap">
+        <table class="mess-table">
+          <thead>
+            <tr>
+              <th>Nr.</th>
+              <th>Messort</th>
+              <th>GAS [%]</th>
+              <th>O₂ [%]</th>
+              <th>LEL [%]</th>
+              <th>H₂S [ppm]</th>
+              <th>CO [ppm]</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><input id="gas-m1-ort" class="mess-input" type="text" /></td>
+              <td><input id="gas-m1-gas" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m1-o2" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m1-lel" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m1-h2s" class="mess-input" type="number" step="1" /></td>
+              <td><input id="gas-m1-co" class="mess-input" type="number" step="1" /></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><input id="gas-m2-ort" class="mess-input" type="text" /></td>
+              <td><input id="gas-m2-gas" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m2-o2" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m2-lel" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m2-h2s" class="mess-input" type="number" step="1" /></td>
+              <td><input id="gas-m2-co" class="mess-input" type="number" step="1" /></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><input id="gas-m3-ort" class="mess-input" type="text" /></td>
+              <td><input id="gas-m3-gas" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m3-o2" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m3-lel" class="mess-input" type="number" step="0.1" /></td>
+              <td><input id="gas-m3-h2s" class="mess-input" type="number" step="1" /></td>
+              <td><input id="gas-m3-co" class="mess-input" type="number" step="1" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+
+  <details class="card card--collapsible">
+    <summary class="card__title">Bemerkungen</summary>
+    <div class="card__body">
+      <label class="field field--full">
+        <textarea id="gas-bemerkungen" class="field__input" rows="3"></textarea>
+      </label>
+    </div>
+  </details>
+
+  <section class="card card--actions">
+    <div class="action-row">
+      <button class="btn btn--save btn--small" data-action="save" data-proto="gas" type="button">Speichern</button>
+      <button class="btn btn--ghost btn--small" data-action="reset" data-proto="gas" type="button">Reset</button>
+    </div>
+    <div class="hint">Speichert das Gasmessprotokoll im Verlauf</div>
+  </section>
+</main>
+
+<!-- ═══════════════ TAB: VERLAUF ═══════════════ -->
+<main id="tab-verlauf" class="pane" role="tabpanel" hidden>
+  <section class="card">
+    <div class="card__title">Gespeicherte Protokolle</div>
+    <div class="filter-row">
+      <label class="field">
+        <span class="field__label">Filter</span>
+        <select id="historyFilter" class="field__input">
+          <option value="alle">Alle Protokolle</option>
+          <option value="bohren">Bohrprotokolle</option>
+          <option value="injektion">Injektionsprotokolle</option>
+          <option value="druckprobe">Druckproben</option>
+          <option value="uebergabe">Übergabeprotokolle</option>
+          <option value="gas">Gasmessungen</option>
+        </select>
+      </label>
+    </div>
+    <div id="historyList" class="historyList"></div>
+    <div class="hint">Neueste oben · lokal gespeichert · max. 50 Einträge</div>
+  </section>
+</main>
+
+<footer class="footer">
+  &copy; <b>HTB Baugesellschaft m.b.H.</b> – Erdwärmesonden PWA
+  <br />
+  <button id="btnInstall" class="btn btn--install" type="button" hidden>App installieren</button>
+</footer>
+
+<script src="/Erdwaermesonde/app.js?v=1"></script>
+</body>
+</html>
