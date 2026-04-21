@@ -1,21 +1,22 @@
-const BASE  = '/Erdwaermesonde/';
-const CACHE = 'htb-ews-v1';
+const CACHE = 'htb-ews-v2';
 const ASSETS = [
-  BASE,
-  BASE + 'index.html',
-  BASE + 'styles.css',
-  BASE + 'app.js',
-  BASE + 'manifest.json'
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './manifest.json',
+  './logo.svg',
+  './icon.svg'
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(ASSETS))
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
@@ -24,7 +25,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request)
       .then(res => {
@@ -36,7 +37,7 @@ self.addEventListener('fetch', (event) => {
         const cached = await caches.match(event.request);
         if (cached) return cached;
         if (event.request.mode === 'navigate') {
-          return caches.match(BASE + 'index.html');
+          return caches.match('./index.html');
         }
       })
   );
